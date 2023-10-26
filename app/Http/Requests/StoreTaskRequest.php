@@ -25,6 +25,21 @@ class StoreTaskRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'phase_id' => ['required', 'integer', 'exists:phases,id'],
             'user_id' => ['required', 'integer', 'exists:users,id'],
+            'priority_id' => ['required', 'exists:priorities,id', 'integer'],
+            'due_date' => ['required', 'date', 'after_or_equal:today'],
+            'description'=> ['required', 'min:5', 'max:500'],
+            'attachment_image' => ['required', 'image', 'mimes:jpg,bmp,png']
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => 'title',
+            'phase_id' => 'phase',
+            'user_id' => 'assignee',
+            'priority_id' => 'priority',
+            'attachment_image' => 'attachment'
         ];
     }
 }

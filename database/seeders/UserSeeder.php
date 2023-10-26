@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use \App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -14,29 +15,40 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'name' => 'Luke Skywalker', 
-            'profile_picture_url' => '/img/lukeskywalker.jpg',
-            'email' => 'Farmboy2Jedi@TheForce.net',
+            'name' => 'John Doe',
+            'profile_picture_url' => '/img/u1.jpg',
+            'email' => 'johndoe@msk.com',
+            'password' => Hash::make('Secret@123')
         ]);
         User::factory()->create([
-            'name' => 'Princess Leia Organa', 
-            'profile_picture_url' => '/img/princessleiaorgana.jpg',
-            'email' => 'RebelLeaderInHeels@GalaxyMail.com',
+            'name' => 'Alex Johnson',
+            'profile_picture_url' => '/img/u2.jpg',
+            'email' => 'alexjohnson@msk.net',
+            'password' => Hash::make('Secret@123')
         ]);
         User::factory()->create([
-            'name' => 'Han Solo', 
-            'profile_picture_url' => '/img/hansolo.webp',
-            'email' => 'KesselRunRecordHolder@FalconMail.com',
+            'name' => 'Jane Smith',
+            'profile_picture_url' => '/img/u3.jpg',
+            'email' => 'janesmith@msk.com',
+            'password' => Hash::make('Secret@123')
         ]);
         User::factory()->create([
-            'name' => 'Darth Vader', 
-            'profile_picture_url' => '/img/darthvader.webp',
-            'email' => 'BreathingIsComplicated@DarkSide.net',
+            'name' => 'Emily Brown',
+            'profile_picture_url' => '/img/u4.jpg',
+            'email' => 'emilybrown@msk.com',
+            'password' => Hash::make('Secret@123')
         ]);
         User::factory()->create([
-            'name' => 'Chewbacca', 
-            'profile_picture_url' => '/img/chewbacca.jpg',
-            'email' => 'HairyHero@WookieeWorld.com',
+            'name' => 'David Wilson',
+            'profile_picture_url' => '/img/u5.jpg',
+            'email' => 'davidwilson@msk.net',
+            'password' => Hash::make('Secret@123')
+        ]);
+        User::factory()->create([
+            'name' => 'Sarah Miller',
+            'profile_picture_url' => '/img/u6.jpg',
+            'email' => 'sarahmiller@msk.com',
+            'password' => Hash::make('Secret@123')
         ]);
     }
 }

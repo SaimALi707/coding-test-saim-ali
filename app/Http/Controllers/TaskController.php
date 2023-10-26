@@ -4,10 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\Phase;
 use App\Models\Task;
+use App\Models\User;
+use App\Traits\ImageUpload;
+use Carbon\Carbon;
+use PharIo\Version\Exception;
 
 class TaskController extends Controller
 {
+
+    use ImageUpload;
 
     public function kanban()
     {
@@ -19,7 +26,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return \App\Models\Phase::with('tasks.user')->get();
+        return Phase::with('tasks.user')
+            ->with('tasks.priority')
+            ->withCount('tasks') // counting the total tasks in each phases
+            ->get();
     }
 
     /**
@@ -44,7 +54,19 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         // Create a new task from the $request
-        $task = Task::create($request->validated());
+        $requestedPhase = Phase::query()->find($request->phase_id);
+        if (!$requestedPhase)
+            return response()->json(['message' => 'No such phase found with the provided id.']);
+
+        $request->merge(
+            [
+                'attachment' => $this->simpleImageUpload($request->attachment_image, '/task-images/')
+            ]
+        );
+
+        $task = Task::create($request->only((new Task)->getFillable()));
+
+        return response()->json(['message' => 'Task created!']);
     }
 
     /**
@@ -52,7 +74,12 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        try {
+            $task = Task::query()->with('user')->find($task->id);
+            return response()->json(['message' => 'Task fetched successfully.', 'data' => $task]);
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -68,7 +95,26 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        try {
+            $requestedPhase = Phase::query()->find($request->phase_id);
+            if (!$requestedPhase)
+                return response()->json(['message' => 'No such phase found with the provided id.']);
+
+            if ($requestedPhase->completed_at != null && $request->completed_at == null)
+                $request->merge(['completed_at' => Carbon::now()]);
+
+            if ($request->hasFile('attachment_image')) {
+                $request->merge(['attachment' => $this->simpleImageUpload($request->attachment_image, '/task-images/')]);
+            }
+            $isUpdated = $task->update($request->only((new Task)->getFillable()));
+
+            if ($isUpdated)
+                return response()->json(['message' => 'Task has been updated successfully']);
+            else
+                return response()->json(['message' => 'Failed to update the task.'], 409);
+        } catch (Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     /**

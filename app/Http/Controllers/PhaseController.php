@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePhaseRequest;
 use App\Http\Requests\UpdatePhaseRequest;
 use App\Models\Phase;
+use App\Models\Task;
+use Carbon\Carbon;
 
 class PhaseController extends Controller
 {
@@ -53,7 +55,24 @@ class PhaseController extends Controller
      */
     public function update(UpdatePhaseRequest $request, Phase $phase)
     {
-        //
+        try {
+            $phase = Phase::query()->find($phase->id);
+            if (!$phase)
+                return response()->json(['message' => 'No phase found!'], 404);
+
+            $phase->tasks()->update([
+                'completed_at' => Carbon::now(),
+            ]);
+
+            $phase->update([
+                'completed_at' => Carbon::now(),
+            ]);
+
+            return response()->json(['message' => 'Phase marked as completed successfully.']);
+        }
+        catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -61,6 +80,17 @@ class PhaseController extends Controller
      */
     public function destroy(Phase $phase)
     {
-        //
+        try {
+            $phase = Phase::query()->find($phase->id);
+            if (!$phase)
+                return response()->json(['message' => 'No phase found!'], 404);
+
+            $phase->destroy($phase->id);
+
+            return response()->json(['message' => 'Phase removed successfully.']);
+        }
+        catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 }
