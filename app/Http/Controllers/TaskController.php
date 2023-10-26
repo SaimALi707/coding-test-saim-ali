@@ -100,8 +100,10 @@ class TaskController extends Controller
             if (!$requestedPhase)
                 return response()->json(['message' => 'No such phase found with the provided id.']);
 
-            if ($requestedPhase->completed_at != null && $request->completed_at == null)
+            if (isset($request->completed_at) && $request->completed_at == null && $requestedPhase->completed_at != null)
                 $request->merge(['completed_at' => Carbon::now()]);
+
+//            return response()->json(['request' => $request->all(), 'requestPhase' => $requestedPhase], 404);
 
             if ($request->hasFile('attachment_image')) {
                 $request->merge(['attachment' => $this->simpleImageUpload($request->attachment_image, '/task-images/')]);

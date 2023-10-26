@@ -60,7 +60,7 @@ class PhaseController extends Controller
             if (!$phase)
                 return response()->json(['message' => 'No phase found!'], 404);
 
-            $phase->tasks()->update([
+            $phase->tasks()->whereNull('completed_at')->update([
                 'completed_at' => Carbon::now(),
             ]);
 
