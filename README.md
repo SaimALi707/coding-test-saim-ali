@@ -23,8 +23,8 @@ You should now be able to browse to http://localhost:8000 and see the project.
 Either you can register a new account in the system, or you can use the following 
 credentions to log in (or any of the others generated in the UserSeeder):
 ```
-Email: Farmboy2Jedi@TheForce.net
-Pass:  password
+Email: johndoe@msk.com
+Pass:  Secret@123
 ```
 
 Note: Make sure that the port 8000 and 5173 are available on your machine. 
